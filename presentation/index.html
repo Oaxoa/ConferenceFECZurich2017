@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>A Handmade Virtual DOM and diff Rendering Implementation</title>
+    <meta name="description"
+          content="Zurich Frontend Conference 2017 - A Handmade Virtual DOM and diff Rendering Implementation">
+    <meta name="author" content="Pierluigi Pesenti">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="lib/reveal/css/reveal.css">
+    <link rel="stylesheet" href="lib/reveal/css/theme/fec.css" id="theme">
+    <!-- Theme used for syntax highlighting of code -->
+    <link rel="stylesheet" href="lib/reveal/lib/css/zenburn.css">
+    <!-- Printing and PDF exports -->
+    <script>
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.type = 'text/css';
+        link.href = window.location.search.match(/print-pdf/gi) ? 'lib/reveal/css/print/pdf.css' : 'lib/reveal/css/print/paper.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    </script>
+    <style rel="stylesheet">
+        .reveal .contacts {
+            display: flex;
+            justify-content: space-between;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            border-top: 1px solid #999;
+            padding-top: .5em;
+            margin-top: .75em;
+            flex-wrap: wrap;
+        }
+
+        .reveal .contacts li {
+            box-sizing: border-box;
+            flex-basis: 50%;
+            text-align: center;
+        }
+    </style>
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+<div class="reveal">
+    <!-- Any section element inside of this container is displayed as a slide -->
+    <div class="slides">
+        <section>
+            <h1>Zurich FEC 2017</h1>
+        </section>
+        <section>
+            <h2>Pierluigi Pesenti</h2>
+            <p>software engineer @Appway</p>
+            <p>software engineer / creative coder / designer</p>
+            <p>pushing pixels for a living since 1999</p>
+            <ul class="contacts">
+                <li><a href="http://art-l4b.com/18" target="_blank">art-l4b.</a><a href="http://art-l4b.com/13"
+                                                                                   target="_blank">com</a></li>
+                <li><a href="mailto:info@oaxoa.com">info@oaxoa.com</a></li>
+                <li><a href="https://github.com/Oaxoa">github.com/Oaxoa</a></li>
+                <li><a href="https://twitter.com/pantaa">@pantaa</a></li>
+            </ul>
+        </section>
+        <section class="cover">
+            <h3><span class="handwritten">A Handmade</span><br/><span class="asdwritten">virtual DOM</span><br/><span
+                    class="handwritten">and</span> <span class="asdwritten">diff rendering</span><br/><span
+                    class="monowritten">implementation</span></h3>
+            <p>Sep 1, 2017</p>
+        </section>
+        <section>
+            <h1>What</h1>
+        </section>
+        <section>
+            <h2>React.js</h2>
+            <h5>(and clones)</h5>
+            <ul>
+                <li class="fragment">Declarative UI</li>
+                <li class="fragment">Component based</li>
+            </ul>
+            <aside class="notes">
+                React became popular around two main concepts:
+
+            </aside>
+        </section>
+        <section class="cover">
+            <h3><span class="handwritten">A Handmade (simplified)</span><br/><span
+                    class="asdwritten">React&ndash;like</span><br/><span class="asdwritten">library</span><br/><span
+                    class="monowritten">implementation</span></h3>
+            <p>in ~250 lines of code</p>
+        </section>
+        <section>
+            <h2>UI update problem</h2>
+            <aside class="notes">
+                This is nothing new. Just to recap
+            </aside>
+        </section>
+        <section>
+            <img src="i/bid.png" alt=""/>
+        </section>
+        <section>
+            <h3>Complete view re-render</h3>
+        </section>
+        <section>
+            <h3>Pros</h3>
+            <ul>
+                <li class="fragment">complete consistent snapshot of the state / data model at any given point in time
+                </li>
+                <li class="fragment">declarative</li>
+                <li class="fragment">easy to maintain at scale</li>
+            </ul>
+        </section>
+        <section>
+            <h3>Cons</h3>
+            <ul>
+                <li class="fragment">Performance</li>
+                <li class="fragment">Interface flickers</li>
+                <li class="fragment">Manually persist part of the state (scrolling position, selections etc.)</li>
+            </ul>
+            <aside class="notes"></aside>
+            <!-- TODO LIST? -->
+        </section>
+        <section>
+            <h3>Imperative mutations</h3>
+        </section>
+        <section>
+            <!-- TODO LIST? -->
+            <h3>Pros</h3>
+            <ul>
+                <li class="fragment">Performance</li>
+                <li class="fragment">No need to manually persist anything</li>
+            </ul>
+
+        </section>
+        <section>
+            <h3>Cons</h3>
+            <ul>
+                <li class="fragment">Imperative</li>
+                <li class="fragment">Doesn't scale</li>
+            </ul>
+        </section>
+        <section>
+            <p>React-like libraries solve the problem by</p>
+            <h3>Declarative UI</h3>
+            <ul>
+                <li>Introducing the concept of a virtual DOM</li>
+                <li>Reconciling the old state object and the new one in a minimal set of DOM manipulations</li>
+                <li>Delegating the imperative work to the library</li>
+            </ul>
+            <aside class="notes"></aside>
+        </section>
+        <section>
+            <p>set(State) and forget</p>
+        </section>
+        <section>
+            <h1>why</h1>
+            <p>Why a handmade own implementation?</p>
+            <ul>
+                <li class="fragment">Don't do it</li>
+                <li class="fragment">Trust OS community</li>
+                <li class="fragment">Just produce value instead</li>
+            </ul>
+            <aside class="notes">
+                <ul>
+                    <li>Don't reinvent the wheel, produce value instead</li>
+                    <li>Productivity time: self-employed, run startup or being hired</li>
+                </ul>
+            </aside>
+        </section>
+        <section>
+            <h1>why</h1>
+            <p>Why a handmade own implementation?</p>
+            <ul>
+                <li class="fragment">Learn</li>
+                <li class="fragment">Demistify</li>
+                <li class="fragment">Creative process</li>
+            </ul>
+            <aside class="notes">
+                <ul>
+                    <li>Get PhD in physics? Know why wheel spins</li>
+                    <li>Boost your logical thinking and problem solving skills</li>
+                    <li>Learning something invented by others is memorizing and understanding, but doesn;t involve the
+                        creative process
+                    </li>
+                    <li>So not reading the source code at the beginning can be a winning choice</li>
+                </ul>
+            </aside>
+        </section>
+        <section>
+            <img src="i/wheel.jpg" alt="" />
+        </section>
+        <section>
+            <h2>Preconditions</h2>
+            <section>
+                <img height="500" src="i/magritte_pipe_react.png" alt=""/>
+            </section>
+            <section>
+                <pre><code class="hljs">var sum = function(a, b) { return a + b; }</code></pre>
+                <h3>vs</h3>
+                <pre><code class="hljs">let sum = (a, b) => a + b</code></pre>
+            </section>
+            <section>
+                <p>No JSX, no CommonJS, no module loader, no build</p>
+                <p>Just fun</p>
+            </section>
+        </section>
+        <section>
+            <h2>Implementation</h2>
+        </section>
+
+        <section>
+            <section>
+                <h2>Library name?</h2>
+            </section>
+            <section data-background="i/rhianna.gif">
+                <h2 class="rhiact">Rhiact</h2>
+            </section>
+            <section data-background="i/overwatch.png"></section>
+            <section data-background="i/shakespeare.png"></section>
+            <section data-background="i/sisteract.png"></section>
+        </section>
+
+
+        <section>
+            <h2>DOM</h2>
+            <img src="i/dom.png" height="600"/>
+        </section>
+        <section>
+            <h2>Markup</h2>
+            <section>
+                <pre><code class="hljs"><div class="fancy" id="message">Hello world</div></code></pre>
+            </section>
+            <section>
+                <pre><code class="hljs">
+<ul class="fancyList">
+    <li>List item #1</li>
+    <li>List item #2</li>
+    <li>List item #3</li>
+</ul>
+                </code></pre>
+            </section>
+            <section>
+                    <pre><code class="hljs">{
+    type: 'div',
+    attributes: {className: 'fancy', id: 'message'},
+    children: ['Hello world']
+}</code></pre>
+            </section>
+            <section>
+                    <pre><code class="hljs">{
+    type: 'ul',
+    attributes: {className: 'fancyList'},
+    children: [
+        {type: 'li', attributes: {}, ['List item #1']},
+        {type: 'li', attributes: {}, ['List item #2']},
+        {type: 'li', attributes: {}, ['List item #3']}
+    ]
+}</code></pre>
+            </section>
+        </section>
+        <section>
+            <h2>Virtual DOM</h2>
+            <ul>
+                <li class="fragment">It is an object</li>
+                <li class="fragment">It is lightweight (type, attributes, children)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Diff rendering (reconciliation)</h2>
+            <ul>
+                <li>Prev state is compared with the new one</li>
+                <li>Minimal set of changes is applied to the real DOM</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Components</h2>
+            <section>
+                <ul>
+                    <li>class / constructor function</li>
+                    <li>receives props / manage state</li>
+                    <li>lifecycle hooks</li>
+                </ul>
+            </section>
+            <section>
+                <pre><code class="hljs">var sum = function(a, b) { return a + b; }</code></pre>
+            </section>
+        </section>
+        <section>
+            <h2>Demo part 2</h2>
+        </section>
+        <section>
+            <h1>Final thoughts</h1>
+            <aside class="notes">
+                I want to leave you with this studying and learning is great, gives great satisfaction. Combine it with
+                experimenting and discovering and gives deeper understanding and even more satisfaction. Will train you
+                at problem solving and at architectural design. So the next time somebody will come up with the next big
+                thing, that person could be you.
+            </aside>
+        </section>
+        <section class="meme" data-background="i/questions1.gif">
+            <h2 class="top">Thanks for your attention</h2>
+            <h2 class="bottom">Please clap and don't ask difficult questions</h2>
+        </section>
+        <section data-background="i/questions2.png"></section>
+        <section data-background="i/questions3.png"></section>
+    </div>
+</div>
+<script src="lib/reveal/lib/js/head.min.js"></script>
+<script src="lib/reveal/js/reveal.js"></script>
+<script>
+    Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide',
+
+        dependencies: [{
+            src: 'lib/reveal/lib/js/classList.js',
+            condition: function () {
+                return !document.body.classList;
+            }
+        }, {
+            src: 'lib/reveal/plugin/highlight/highlight.js',
+            async: true,
+            callback: function () {
+                hljs.initHighlightingOnLoad();
+            }
+        }, {
+            src: 'lib/reveal/plugin/zoom-js/zoom.js',
+            async: true
+        }, {
+            src: 'lib/reveal/plugin/notes/notes.js',
+            async: true
+        }]
+    });
+</script>
+</body>
+
+</html>

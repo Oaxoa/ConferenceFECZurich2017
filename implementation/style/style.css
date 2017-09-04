@@ -1,0 +1,131 @@
+body {
+	font-family: Muli, sans-serif;
+}
+.test {
+	color: red;
+}
+.dice {
+	width: 128px;
+	height: 128px;
+	border-radius: 15px;
+	border: 1px solid #555;
+	padding: 0;
+	margin: 1em;
+	background-image: url(../assets/dice.png);
+    background-repeat: no-repeat;
+}
+.diceWrapper {
+	display: inline-block;
+}
+.dice1 {background-position: 0 0;}
+.dice2 {background-position: -128px 0;}
+.dice3 {background-position: -256px 0;}
+.dice4 {background-position: -384px 0;}
+.dice5 {background-position: -512px 0;}
+.dice6 {background-position: -640px 0;}
+
+
+.inputField1, .inputField2 {
+	border: 2px solid black;
+}
+.inputField1 {border-color: red;}
+.inputField2 {border-color: blue;}
+
+.testClassName3 {
+	color: red;
+}
+.testClassName2 {
+	margin-top: 1em;
+	padding-top: 1em;
+	border-top: 1px solid #999;
+}
+.counterWrapper {
+	padding: .5em;
+	margin: 1em;
+	border: 1px solid #999;
+	border-radius: 3px;
+	width: 100px;
+	text-align: center;
+}
+.counterNumber {
+	font-size: 56px;
+}
+.counterWrapper button {
+	border-radius: 3px;
+	border: none;
+	background: #ddd;
+	color: #333;
+	font-size: 24px;
+	width: 40px;
+	margin: 5px;
+	cursor: pointer;
+	transition: all .3s ease;
+	outline: none;
+}
+.counterWrapper button:hover {
+	background: #bbb;
+}
+.productSheet {
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	padding: 1em;
+	margin: 1em;
+	width: 820px;
+	display: flex;
+	position: relative;
+}
+.productAddBox {
+	position: absolute;
+	top: 1.25em; right: 1em;
+}
+.productAddBox>* {
+	height: 28px;
+	vertical-align: middle;
+	margin: 0 .5em;
+}
+.productAddBox button {
+	background: #FB0;
+	border: none;
+	cursor: pointer;
+	padding: 0 .75em;
+}
+.productLeft {
+
+}
+.productRight {
+	flex-grow: 1;
+}
+.productSheet h2 {
+	margin: 0; padding: 0;
+}
+.productSheet h4 {
+	margin: 0; padding: 0;
+	margin-bottom: 2em;
+	border-top: 1px solid #ccc;
+	padding-top: .5em;
+	margin-top: .5em;
+}
+.productSheet h4::before {
+	content: 'by ';
+	color: #999;
+	font-weight: normal;
+}
+.productImage {
+	width: 150px;
+	margin-right: 30px;
+	display: block;
+}
+.productDescription::after {
+	display: block;
+	content: '';
+	clear: both;
+}
+.productPrice {
+	font-size: 2em;
+	margin: .5em 0;
+}
+.productPrice::before {
+	font-size: .7em;
+	color: #999;
+	content: 'Price: ';
+}
